@@ -17,17 +17,18 @@ import class    http.IncomingMessage
 
 public extension IncomingMessage {
   
-  convenience init(lambdaRequest : APIGateway.V2.Request,
+  convenience init(lambdaRequest : APIGateway.Request,
                    log           : Logger = .init(label: "μ.http"))
   {
     // version doesn't matter, we don't really do HTTP
     var head = HTTPRequestHead(
       version : .init(major: 1, minor: 1),
-      method  : lambdaRequest.context.http.method.asNIO,
-      uri     : lambdaRequest.context.http.path
+        method  : lambdaRequest.httpMethod.asNIO,
+      uri     : lambdaRequest.path
     )
     head.headers = lambdaRequest.headers.asNIO
-    
+
+/*
     if let cookies = lambdaRequest.cookies, !cookies.isEmpty {
       // So our "connect" module expects them in the headers, so we'd need
       // to serialize them again ...
@@ -37,6 +38,7 @@ public extension IncomingMessage {
         head.headers.add(name: "Cookie", value: cookie)
       }
     }
+*/
     
     // TBD: there is also "pathParameters", what is that, URL fragments (#)?
     if let pathParams = lambdaRequest.pathParameters, !pathParams.isEmpty {
@@ -69,7 +71,7 @@ public extension IncomingMessage {
     lambdaGatewayRequest = lambdaRequest
   }
   
-  internal func sendLambdaBody(_ lambdaRequest: APIGateway.V2.Request) {
+  internal func sendLambdaBody(_ lambdaRequest: APIGateway.Request) {
     defer { push(nil) }
     
     guard let body = lambdaRequest.body else { return }
@@ -89,13 +91,13 @@ public extension IncomingMessage {
 
 
 enum LambdaRequestKey: EnvironmentKey {
-  static let defaultValue : APIGateway.V2.Request? = nil
+  static let defaultValue : APIGateway.Request? = nil
   static let loggingKey   = "lambda-request"
 }
 
 public extension IncomingMessage {
   
-  var lambdaGatewayRequest: APIGateway.V2.Request? {
+  var lambdaGatewayRequest: APIGateway.Request? {
     set { environment[LambdaRequestKey.self] = newValue }
     get { return environment[LambdaRequestKey.self]     }
   }

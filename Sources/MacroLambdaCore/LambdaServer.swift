@@ -178,8 +178,8 @@ extension lambda {
       //       would even touch the MacroCore loop (vs using current).
       
       struct APIGatewayProxyLambda: EventLoopLambdaHandler {
-        typealias In  = APIGateway.V2.Request
-        typealias Out = APIGateway.V2.Response
+        typealias In  = APIGateway.Request
+        typealias Out = APIGateway.Response
         
         let server : Server
 
@@ -198,9 +198,9 @@ extension lambda {
     }
     
     private func handle(context  : Lambda.Context,
-                        request  : APIGateway.V2.Request,
+                        request  : APIGateway.Request,
                         callback : @escaping
-                          ( Result<APIGateway.V2.Response, Error> ) -> Void)
+                          ( Result<APIGateway.Response, Error> ) -> Void)
     {
       guard !self._requestListeners.isEmpty else {
         assertionFailure("no request listeners?!")

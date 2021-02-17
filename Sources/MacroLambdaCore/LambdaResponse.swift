@@ -13,10 +13,10 @@ import enum  AWSLambdaEvents.APIGateway
 
 extension ServerResponse {
   
-  var asLambdaGatewayResponse: APIGateway.V2.Response {
+  var asLambdaGatewayResponse: APIGateway.Response {
     assert(writableEnded, "sending ServerResponse which didn't end?!")
     
-    let ( singleHeaders, multiHeaders, cookies ) = headers.asLambda()
+    let ( singleHeaders, multiHeaders, _ ) = headers.asLambda()
     
     let body : String? = {
       guard let writtenContent = writableBuffer, !writtenContent.isEmpty else {
@@ -39,8 +39,7 @@ extension ServerResponse {
                  headers           : singleHeaders,
                  multiValueHeaders : multiHeaders,
                  body              : body,
-                 isBase64Encoded   : body != nil ? true : false,
-                 cookies           : cookies)
+                 isBase64Encoded   : body != nil ? true : false)
   }
 }
 
