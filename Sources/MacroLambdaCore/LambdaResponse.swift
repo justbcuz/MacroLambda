@@ -13,7 +13,7 @@ import enum  AWSLambdaEvents.APIGateway
 
 extension ServerResponse {
   
-  var asLambdaGatewayResponse: APIGateway.V2.Response {
+  open var asLambdaGatewayResponse: APIGateway.V2.Response {
     assert(writableEnded, "sending ServerResponse which didn't end?!")
     
     let ( singleHeaders, multiHeaders, cookies ) = headers.asLambda()
@@ -43,7 +43,7 @@ extension ServerResponse {
                  cookies           : cookies)
   }
   
-  var asLambdaV1GatewayResponse: APIGateway.Response {
+  open var asLambdaV1GatewayResponse: APIGateway.Response {
     assert(writableEnded, "sending ServerResponse which didn't end?!")
     
     let ( singleHeaders, multiHeaders, _ ) = headers.asLambda()
